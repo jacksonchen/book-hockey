@@ -8,6 +8,7 @@ var fs = require('fs');
 var app = express();
 // create a server with express and http
 var server = require('http').createServer(app).listen(8080);
+console.log("Listening on port 8080...");
 // import socket.io and connect it with the server
 var io = require('socket.io')(server);
 // use jackson's getTwitter
