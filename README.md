@@ -1,2 +1,2 @@
-# book-hockey
-The result when Amazon Echo and Facebook have a child
+# Twitter Sentiment Analysis
+Conducts sentiment analysis on tweets by hashtag, and then visualizes the mood around that hashtag through a web app.
