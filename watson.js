@@ -15,7 +15,7 @@ exports.tone = function(tweet, callback) {
         if (err){
             return err
         }else{
-            callback(JSON.stringify(tone, null, 2));
+            callback(tone);
         }
     });
 }
