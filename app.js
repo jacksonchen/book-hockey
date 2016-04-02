@@ -40,14 +40,23 @@ io.on('connection', function(socket){
     }
     console.log("A program connected");
     getTwitter.tweets(function(tweetArr) {
+        var j = 0;
         for (var i = 0; i < tweetArr.length; i++) {
-            watson.tone(tweetArr[i], function(tempJSON) {
-                var temp = tempJSON.document_tone.tone_categories[0];
-                var sortedObjArray = temp.tones.sort(compare);
-                var id = sortedObjArray[0].tone_id;
-                emotions[id]++;
-            });
+            (function(i) {
+                watson.tone(tweetArr[i], function(tempJSON) {
+                    var temp = tempJSON.document_tone.tone_categories[0];
+                    var sortedObjArray = temp.tones.sort(compare);
+                    var id = sortedObjArray[0].tone_id;
+                    // console.log(id + ": " + sortedObjArray[0].score);
+                    emotions[id]++;
+                    j++;
+
+                    if (j === tweetArr.length) {
+                        console.log(emotions);
+                        io.emit('emotions', emotions);
+                    }
+                });
+            })(i);
         }
-        io.emit('emotions', emotions);
     });
 });
