@@ -9,7 +9,30 @@ $(document).ready(function(){
                 sum += emotions[e];
             }
         }
-        $('#wrapper').text(JSON.stringify(emotions));
+        var chart = new CanvasJS.Chart("wrapper",
+    	{
+    		title:{
+    			text: "Real Time Emotions in Twitter Right Now"
+    		},
+    		legend: {
+    			maxWidth: 350,
+    			itemWidth: 120
+    		},
+    		data: [
+        		{
+        			type: "pie",
+        			showInLegend: false,
+        			legendText: "{indexLabel}",
+        			dataPoints: [
+        				{ y: emotions['anger'], indexLabel: "Anger" },
+        				{ y: emotions['disgust'], indexLabel: "Disgust" },
+        				{ y: emotions['fear'], indexLabel: "Fear" },
+        				{ y: emotions['sadness'], indexLabel: "Sadness"},
+        				{ y: emotions['joy'], indexLabel: "Joy" },
+        			]
+        		}
+    		]
+    	});
+    	chart.render();
     });
-
 });
