@@ -30,15 +30,28 @@ function compare(a,b) {
     return 0;
 }
 
+var emotions = {
+    anger: 0,
+    disgust: 0,
+    fear: 0,
+    joy: 0,
+    sadness: 0
+}
 io.on('connection', function(socket){
-    var emotions = {
+    console.log("A program connected");
+    setInterval(function() {
+        socket.emit('emotions', emotions);
+    }, 15000);
+});
+
+setInterval(function() {
+    var em = {
         anger: 0,
         disgust: 0,
         fear: 0,
         joy: 0,
         sadness: 0
     }
-    console.log("A program connected");
     getTwitter.tweets(function(tweetArr) {
         var j = 0;
         for (var i = 0; i < tweetArr.length; i++) {
@@ -48,15 +61,15 @@ io.on('connection', function(socket){
                     var sortedObjArray = temp.tones.sort(compare);
                     var id = sortedObjArray[0].tone_id;
                     // console.log(id + ": " + sortedObjArray[0].score);
-                    emotions[id]++;
+                    em[id]++;
                     j++;
 
                     if (j === tweetArr.length) {
-                        console.log(emotions);
-                        io.emit('emotions', emotions);
+                        console.log(em);
+                        emotions = em;
                     }
                 });
             })(i);
         }
     });
-});
+}, 15000);
