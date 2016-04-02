@@ -29,11 +29,22 @@ $(document).ready(function(){
                         { y: (emotions['disgust']/sum)*100, indexLabel: "Disgust: " + String(Math.round((emotions['disgust']/sum)*100)) },
         				{ y: (emotions['fear']/sum)*100, indexLabel: "Fear: " + String(Math.round((emotions['fear']/sum)*100)) },
         				{ y: (emotions['sadness']/sum)*100, indexLabel: "Sadness: " + String(Math.round((emotions['sadness']/sum)*100)) },
-        				{ y: (emotions['joy']/sum)*100, indexLabel: "Joy: " + String(Math.round((emotions['joy']/sum)*100)) },
+// TODO: can I get rid of the comma on the bottom of this JSON
+                        { y: (emotions['joy']/sum)*100, indexLabel: "Joy: " + String(Math.round((emotions['joy']/sum)*100)) },
         			]
         		}
     		]
     	});
     	chart.render();
+    });
+
+    $('input').keyup(function(event) {
+        if(event.keycode === 13){
+            var hash = $('input').val();
+            if (hash.charAt(0) === '#'){
+                hash.charAt(0) = "";
+            }
+            socket.emit('hash', hash);
+        }
     });
 });

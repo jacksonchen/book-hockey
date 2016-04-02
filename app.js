@@ -15,6 +15,17 @@ var io = require('socket.io')(server);
 var getTwitter = require('./getTwitter');
 // use watson parser
 var watson = require('./watson');
+// twitter counter to tell us when to start a new thread
+var tweeterCounter = 0;
+// number of tweets
+var lengthOfTweetArr = 0;
+// define the search
+var hashtag = "";
+
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
+
+
 // make it so that index.html can excess public files
 app.use(express.static(__dirname + "/public"));
 // route the people with this
@@ -32,7 +43,7 @@ function compare(a,b) {
     else
     return 0;
 }
-
+// var to update and send to clients
 var emotions = {
     anger: 0,
     disgust: 0,
@@ -40,39 +51,65 @@ var emotions = {
     joy: 0,
     sadness: 0
 }
-io.on('connection', function(socket){
-    console.log("A program connected");
-    setInterval(function() {
-        socket.emit('emotions', emotions);
-    }, updateInterval);
-});
 
-setInterval(function() {
-    var em = {
-        anger: 0,
-        disgust: 0,
-        fear: 0,
-        joy: 0,
-        sadness: 0
-    }
-    getTwitter.tweets(function(tweetArr) {
-        var j = 0;
-        for (var i = 0; i < tweetArr.length; i++) {
-            (function(i) {
-                watson.tone(tweetArr[i], function(tempJSON) {
-                    var temp = tempJSON.document_tone.tone_categories[0];
-                    var sortedObjArray = temp.tones.sort(compare);
-                    var id = sortedObjArray[0].tone_id;
-                    // console.log(id + ": " + sortedObjArray[0].score);
-                    em[id]++;
-                    j++;
+start();
 
-                    if (j === tweetArr.length) {
-                        console.log(em);
-                        emotions = em;
-                    }
-                });
-            })(i);
+io.on('connection', function(socket) {
+    console.log("the program connected");
+    socket.on('hash', function(hash) {
+        hashtag = hash;
+    });
+    // emit the emotions hash
+    eventEmitter.on('send', function(val) {
+        if (val) {
+            console.log(emotions);
+            var sum = 0;
+            for (e in emotions){
+                if(emotions.hasOwnProperty(e)){
+                    sum += emotions[e];
+                }
+            }
+            console.log(sum);
+            socket.emit('emotions', emotions);
+            for(e in emotions){
+                emotions[e] = 0;
+            }
+            tweeterCounter = 0;
+            start();
         }
     });
-}, updateInterval);
+});
+
+function start() {
+    getTwitter.tweets(hashtag, function(tweetArr) {
+        lengthOfTweetArr = tweetArr.length;
+        for (var i = 0; i < lengthOfTweetArr; i++) {
+            // console.log(i);
+            watsonInit(i, tweetArr);
+        }
+    });
+}
+
+function watsonInit(i, tweetArr) {
+    // console.log(i + ": " +tweetArr[i]);
+    // console.log(i);
+    watson.tone(tweetArr[i], watsonCallback);
+};
+
+function watsonCallback(err, tempJSON) {
+    if(err === null){
+        // console.log(err);
+        var temp = tempJSON.document_tone.tone_categories[0];
+        var sortedObjArray = temp.tones.sort(compare);
+        var id = sortedObjArray[0].tone_id;
+        // console.log(id + ": " + sortedObjArray[0].score);
+        emotions[id]++;
+        // console.log(emotions);
+        // console.log(tweeterCounter + ": " + lengthOfTweetArr);
+        // console.log(send);
+    }
+    tweeterCounter++;
+    if (tweeterCounter === lengthOfTweetArr) {
+        eventEmitter.emit('send', true);
+    }
+}

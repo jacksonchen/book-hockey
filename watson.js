@@ -13,9 +13,13 @@ tone_analyzer = watson.tone_analyzer({
 exports.tone = function(tweet, callback) {
     tone_analyzer.tone({ text: tweet }, function(err, tone) {
         if (err){
-            return err
+            if(err.code != 429 && err.code != 500){
+                console.log(tweet);
+                console.log(err);
+            }
+            callback(err, tone);
         }else{
-            callback(tone);
+            callback(null, tone);
         }
     });
 }

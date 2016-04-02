@@ -18,9 +18,10 @@ function getTweets(callback) {
   });
 }
 
-exports.tweets = function compileTweets(callback) {
+exports.tweets = function compileTweets(hash, callback) {
   var tweetArr = []
   getTweets(function(tweetsHash) {
+    //   console.log(tweetsHash);
     tweetsHash.forEach(function(tweet) {
       tweetArr.push(tweet.text);
     });
