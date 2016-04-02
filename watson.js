@@ -1,6 +1,7 @@
 // to import watson
 var watson = require('watson-developer-cloud');
 
+// readies the wateson by using usernames and stuff
 tone_analyzer = watson.tone_analyzer({
     username: "af761d6f-4f29-480c-a4a8-8b899d105e18",
     password: "Z92dlPEJSf42",
@@ -8,6 +9,7 @@ tone_analyzer = watson.tone_analyzer({
     version_date: '2016-02-11'
 });
 
+// the actual tone analysis
 export.tone = function(tweet) {
     tone_analyzer.tone({ text: tweet },
     function(err, tone) {
