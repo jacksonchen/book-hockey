@@ -16,9 +16,9 @@ var getTwitter = require('./getTwitter');
 // use watson parser
 var watson = require('./watson');
 // twitter counter to tell us when to start a new thread
-var tweeterCounter = 0;
+var tweetsProcessed = 0;
 // number of tweets
-var lengthOfTweetArr = 0;
+var totalTweets = 0;
 // define the search
 var hashtag = "";
 
@@ -26,7 +26,7 @@ var events = require('events');
 var eventEmitter = new events.EventEmitter();
 
 
-// make it so that index.html can excess public files
+// make it so that index.html can access public files
 app.use(express.static(__dirname + "/public"));
 // route the people with this
 app.get("/", function(req, res) {
@@ -36,21 +36,36 @@ app.get("/", function(req, res) {
 
 // for the sort array
 function compare(a,b) {
-    if (a.score > b.score)
-    return -1;
-    else if (a.score < b.score)
-    return 1;
-    else
-    return 0;
+    if (a.score > b.score) {
+      return -1;
+    } else if (a.score < b.score) {
+      return 1;
+    } else {
+      return 0;
+    }
 }
+
+Array.prototype.sum = function() {
+  var sum = 0;
+  for (var i=0;i<this.length;i++) {
+    sum += this[i];
+  }
+  return sum;
+}
+
+Array.prototype.clear = function() {
+  for (var i=0;i<this.length;i++) {
+    this[i] = 0;
+  }
+}
+
 // var to update and send to clients
-var emotions = {
-    anger: 0,
-    disgust: 0,
-    fear: 0,
-    joy: 0,
-    sadness: 0
-}
+// 0 = anger
+// 1 = disgust
+// 2 = fear
+// 3 = joy
+// 4 = sadness
+var emotions = [0,0,0,0,0];
 
 start();
 
@@ -63,18 +78,14 @@ io.on('connection', function(socket) {
     eventEmitter.on('send', function(val) {
         if (val) {
             console.log(emotions);
-            var sum = 0;
-            for (e in emotions){
-                if(emotions.hasOwnProperty(e)){
-                    sum += emotions[e];
-                }
+            var sum = emotions.sum();
+            var percents = [];
+            for (var i=0;i<emotions.length;i++) {
+              percents.push(getPercent(emotions[i],sum));
             }
-            console.log(sum);
-            socket.emit('emotions', emotions);
-            for(e in emotions){
-                emotions[e] = 0;
-            }
-            tweeterCounter = 0;
+            socket.emit('emotions', { "sum": sum, "percents": percents, topic:"Bernie Sanders" });
+            emotions.clear();
+            tweetsProcessed = 0;
             start();
         }
     });
@@ -82,34 +93,57 @@ io.on('connection', function(socket) {
 
 function start() {
     getTwitter.tweets(hashtag, function(tweetArr) {
-        lengthOfTweetArr = tweetArr.length;
-        for (var i = 0; i < lengthOfTweetArr; i++) {
-            // console.log(i);
+        totalTweets = tweetArr.length;
+        for (var i = 0; i < totalTweets; i++) {
             watsonInit(i, tweetArr);
         }
     });
 }
 
 function watsonInit(i, tweetArr) {
-    // console.log(i + ": " +tweetArr[i]);
-    // console.log(i);
-    watson.tone(tweetArr[i], watsonCallback);
+  watson.tone(tweetArr[i], watsonCallback);
 };
 
 function watsonCallback(err, tempJSON) {
-    if(err === null){
-        // console.log(err);
+    if (err === null){
         var temp = tempJSON.document_tone.tone_categories[0];
         var sortedObjArray = temp.tones.sort(compare);
         var id = sortedObjArray[0].tone_id;
-        // console.log(id + ": " + sortedObjArray[0].score);
-        emotions[id]++;
-        // console.log(emotions);
-        // console.log(tweeterCounter + ": " + lengthOfTweetArr);
-        // console.log(send);
+        switch(id) {
+          case 'anger':
+            emotions[0]++;
+            break;
+          case 'disgust':
+            emotions[1]++;
+            break;
+          case 'fear':
+            emotions[2]++;
+            break;
+          case 'joy':
+            emotions[3]++;
+            break;
+          case 'sadness':
+            emotions[4]++;
+            break;
+          default:
+            emotions[0]++;
+            break;
+        }
     }
-    tweeterCounter++;
-    if (tweeterCounter === lengthOfTweetArr) {
+    tweetsProcessed++;
+    if (tweetsProcessed === totalTweets) {
         eventEmitter.emit('send', true);
     }
+}
+
+function getPercent(value,sum) {
+  return Math.floor((value/sum)*100);
+}
+
+function sumEmotions(emotions) {
+  var sum = 0;
+  for (i in emotions) {
+    sum += emotions[emotion];
+  }
+  return sum;
 }

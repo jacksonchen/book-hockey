@@ -1,19 +1,11 @@
 $(document).ready(function(){
     var socket = io('http://localhost:8080');
 
-    socket.on('emotions', function(emotions) {
-        var sum = 0;
-        for (e in emotions){
-            console.log(e, emotions[e]);
-            if(emotions.hasOwnProperty(e)){
-                sum += emotions[e];
-            }
-        }
-        console.log("++++++++++++"+sum+"++++++++++++++++++++");
+    socket.on('emotions', function(data) {
         var chart = new CanvasJS.Chart("wrapper",
     	{
     		title:{
-    			text: "Real Time Emotions in Twitter Right Now"
+    			text: "Real Time Emotions about \'" + data.topic + "\' in Twitter Right Now"
     		},
     		legend: {
     			maxWidth: 350,
@@ -23,14 +15,23 @@ $(document).ready(function(){
         		{
         			type: "pie",
         			showInLegend: false,
-        			legendText: "{indexLabel}",
         			dataPoints: [
-        				{ y: (emotions['anger']/sum)*100, indexLabel: "Anger: " + String(Math.round((emotions['anger']/sum)*100)) },
-                        { y: (emotions['disgust']/sum)*100, indexLabel: "Disgust: " + String(Math.round((emotions['disgust']/sum)*100)) },
-        				{ y: (emotions['fear']/sum)*100, indexLabel: "Fear: " + String(Math.round((emotions['fear']/sum)*100)) },
-        				{ y: (emotions['sadness']/sum)*100, indexLabel: "Sadness: " + String(Math.round((emotions['sadness']/sum)*100)) },
-// TODO: can I get rid of the comma on the bottom of this JSON
-                        { y: (emotions['joy']/sum)*100, indexLabel: "Joy: " + String(Math.round((emotions['joy']/sum)*100)) },
+        				{
+                  y: data.percents[0],
+                  indexLabel: "Anger: " + data.percents[0]
+                },{
+                  y: data.percents[1],
+                  indexLabel: "Disgust: " + data.percents[1]
+                },{
+                  y: data.percents[2],
+                  indexLabel: "Fear: " + data.percents[2]
+                },{
+                  y: data.percents[3],
+                  indexLabel: "Joy: " + data.percents[3]
+                },{
+                  y: data.percents[4],
+                  indexLabel: "Sadness: " + data.percents[4]
+                }
         			]
         		}
     		]
