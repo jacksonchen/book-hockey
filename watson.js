@@ -10,17 +10,12 @@ tone_analyzer = watson.tone_analyzer({
 });
 
 // the actual tone analysis
-export.tone = function(tweet) {
-    for (var t in tweet) {
-        if (object.hasOwnProperty(t)) {
-            tone_analyzer.tone({ text: t },
-                function(err, tone) {
-                    if (err)
-                    return err
-                    else
-                    return (JSON.stringify(tone, null, 2));
-                }
-            );
+exports.tone = function(tweet, callback) {
+    tone_analyzer.tone({ text: tweet }, function(err, tone) {
+        if (err){
+            return err
+        }else{
+            callback(JSON.stringify(tone, null, 2));
         }
-    }
+    });
 }
