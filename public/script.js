@@ -9,6 +9,7 @@ $(document).ready(function(){
                 sum += emotions[e];
             }
         }
+        console.log("++++++++++++"+sum+"++++++++++++++++++++");
         var chart = new CanvasJS.Chart("wrapper",
     	{
     		title:{
@@ -24,11 +25,11 @@ $(document).ready(function(){
         			showInLegend: false,
         			legendText: "{indexLabel}",
         			dataPoints: [
-        				{ y: emotions['anger'], indexLabel: "Anger: " + String(emotions['anger']) },
-        				{ y: emotions['disgust'], indexLabel: "Disgust: " + String(emotions['disgust']) },
-        				{ y: emotions['fear'], indexLabel: "Fear: " + String(emotions['fear']) },
-        				{ y: emotions['sadness'], indexLabel: "Sadness: " + String(emotions['sadness']) },
-        				{ y: emotions['joy'], indexLabel: "Joy: " + String(emotions['joy']) },
+        				{ y: (emotions['anger']/sum)*100, indexLabel: "Anger: " + String(Math.round((emotions['anger']/sum)*100)) },
+                        { y: (emotions['disgust']/sum)*100, indexLabel: "Disgust: " + String(Math.round((emotions['disgust']/sum)*100)) },
+        				{ y: (emotions['fear']/sum)*100, indexLabel: "Fear: " + String(Math.round((emotions['fear']/sum)*100)) },
+        				{ y: (emotions['sadness']/sum)*100, indexLabel: "Sadness: " + String(Math.round((emotions['sadness']/sum)*100)) },
+        				{ y: (emotions['joy']/sum)*100, indexLabel: "Joy: " + String(Math.round((emotions['joy']/sum)*100)) },
         			]
         		}
     		]
