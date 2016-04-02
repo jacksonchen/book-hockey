@@ -132,7 +132,7 @@ function watsonCallback(err, tempJSON) {
             break;
         }
     }else {
-        console.log(errNum++);
+        errNum++;
     }
     tweetsProcessed++;
     if (tweetsProcessed === totalTweets) {
