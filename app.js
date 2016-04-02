@@ -1,3 +1,5 @@
+// update Interval
+var updateInterval = 5000;
 // import express
 var express = require('express');
 // fs file reader
@@ -41,7 +43,7 @@ io.on('connection', function(socket){
     console.log("A program connected");
     setInterval(function() {
         socket.emit('emotions', emotions);
-    }, 15000);
+    }, updateInterval);
 });
 
 setInterval(function() {
@@ -72,4 +74,4 @@ setInterval(function() {
             })(i);
         }
     });
-}, 15000);
+}, updateInterval);
