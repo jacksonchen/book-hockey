@@ -24,11 +24,11 @@ $(document).ready(function(){
         			showInLegend: false,
         			legendText: "{indexLabel}",
         			dataPoints: [
-        				{ y: emotions['anger'], indexLabel: "Anger" },
-        				{ y: emotions['disgust'], indexLabel: "Disgust" },
-        				{ y: emotions['fear'], indexLabel: "Fear" },
-        				{ y: emotions['sadness'], indexLabel: "Sadness"},
-        				{ y: emotions['joy'], indexLabel: "Joy" },
+        				{ y: emotions['anger'], indexLabel: "Anger: " + String(emotions['anger']) },
+        				{ y: emotions['disgust'], indexLabel: "Disgust: " + String(emotions['disgust']) },
+        				{ y: emotions['fear'], indexLabel: "Fear: " + String(emotions['fear']) },
+        				{ y: emotions['sadness'], indexLabel: "Sadness: " + String(emotions['sadness']) },
+        				{ y: emotions['joy'], indexLabel: "Joy: " + String(emotions['joy']) },
         			]
         		}
     		]
