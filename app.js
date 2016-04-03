@@ -1,5 +1,5 @@
 // update Interval
-var updateInterval = 5000;
+var updateInterval = 10000;
 // import express
 var express = require('express');
 // fs file reader
@@ -94,7 +94,7 @@ io.on('connection', function(socket) {
     eventEmitter.on('sendL', function(val) {
         console.log("error: " + val);
         var sumL = emotionsL.sum();
-        console.log("sum: " + sumL);
+        // console.log("sum: " + sumL);
         var percentsL = [];
         for (var i=0;i<emotionsL.length;i++) {
           percentsL.push(getPercent(emotionsL[i],sumL));
