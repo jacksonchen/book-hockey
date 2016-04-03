@@ -2,27 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css" />
+    <script type="text/javascript" src="public/jquery-2.2.2.min.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Raleway:100' rel='stylesheet' type='text/css' />
+    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <link rel="stylesheet" href="public/style.css" />
+    <script type="text/javascript" src="public/styling.js"></script>
     <title>Twitter Sentiment Analysis</title>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxUn5nau4BByL83gri20fG_HaAt3QOuys&libraries=visualization&callback=initMap"> -->
     </script>
-    <script type="text/javascript" src="jquery-2.2.2.min.js"></script>
     <script type="text/javascript" src="canvasjs.min.js"></script>
     <script type="text/javascript" src="script.js"></script>
 </head>
 <body>
+  <div id="header">
+    <div class="title">Twitter Sentiment Analysis Tool</div>
+    <div class="subtitle">by Jackson Chen, Suyog Soti, and Evan Derby</div>
+  </div>
+  <div id="body">
     <div id="wrapper">
+      <div class="half-container">
         <div id="one">
-            <input type="text" id="one" name="hashtag-Place" placeholder="Type HashTag or Topic Here">
+            <input type="text" id="one" name="hashtag-Place" placeholder="Type your topic here">
             <div id="oneCanvas"></div>
         </div>
+      </div>
+      <div class="half-container">
         <div id="two">
-            <input type="text" id="two" name="hashtag-Place" placeholder="Type HashTag or Topic Here">
+            <input type="text" id="two" name="hashtag-Place" placeholder="Type your topic here">
             <div id="twoCanvas"></div>
         </div>
+      </div>
     </div>
-    <div id="map">
-    </div>
+  </div>
 </body>
 </html>
