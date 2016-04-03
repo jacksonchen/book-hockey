@@ -93,14 +93,22 @@ io.on('connection', function(socket) {
         tweetsProcessed = 0;
         setTimeout(start(), updateInterval);
     });
+    eventEmitter.on('nada', function(data) {
+        hashtag = "swag";
+        start();
+    })
 });
 
 function start() {
     getTwitter.tweets(hashtag, function(tweetArr) {
         totalTweets = tweetArr.length;
         console.log("Total Tweets: " + totalTweets);
-        for (var i = 0; i < totalTweets; i++) {
-            watsonInit(i, tweetArr);
+        if (totalTweets === 0) {
+            eventEmitter.emit("nada", 0);
+        }else{
+            for (var i = 0; i < totalTweets; i++) {
+                watsonInit(i, tweetArr);
+            }
         }
     });
 }
