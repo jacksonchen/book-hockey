@@ -1,19 +1,62 @@
-input {
-    text-align: center;
-    width: 596px;
-    height: 30px;
-    font-size: 30px;
+body {
+  font-family: 'Helvetica', 'Arial';
+  margin: 0;
 }
-div#wrapper div{
+
+/* HEADER */
+div#header {
+  background-color: #55acee;
+  height: 100px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 5px 5px grey;
+  position: fixed
+}
+
+div#header > div.title {
+  padding-top: 20px;
+  font-size: 36px;
+}
+
+div#header > div.subtitle {
+  font-family: 'Raleway';
+}
+
+/* BODY */
+div#body {
+  padding-top: 100px;
+  min-height: 550px;
+}
+
+div#wrapper {
+  height: 100%;
+  width: 100%;
+}
+
+div#wrapper > div.half-container {
+  width: 49.5%;
+  float: left;
+}
+
+div#wrapper > div.half-container > div {
     width: 600px;
     height: 500px;
-    display: inline-block;
-    background-color: rgb(195, 195, 195);
-    margin-right: 3px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    /*background-color: rgb(195, 195, 195);*/
 }
 
 div#wrapper div div{
     width: 500px;
     margin: auto;
     height: 450px;
+}
+
+input {
+    text-align: center;
+    width: 596px;
+    height: 30px;
+    font-size: 15px;
+    margin-top: 200px;
 }
