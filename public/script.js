@@ -5,7 +5,7 @@ $(document).ready(function(){
         var chart = new CanvasJS.Chart("wrapper",
     	{
     		title:{
-    			text: "Real Time Emotions about \'" + data.topic + "\' in Twitter Right Now"
+    			text: "Real Time Emotions about \'" + data.topic + "\' on Twitter Right Now"
     		},
     		legend: {
     			maxWidth: 350,
