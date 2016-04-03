@@ -1,6 +1,19 @@
 input {
     text-align: center;
-    width: 800px;
+    width: 596px;
     height: 30px;
     font-size: 30px;
+}
+div#wrapper div{
+    width: 600px;
+    height: 500px;
+    display: inline-block;
+    background-color: rgb(195, 195, 195);
+    margin-right: 3px;
+}
+
+div#wrapper div div{
+    width: 500px;
+    margin: auto;
+    height: 450px;
 }

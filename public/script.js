@@ -2,7 +2,7 @@ $(document).ready(function(){
     var socket = io('http://localhost:8080');
 
     socket.on('emotions', function(data) {
-        var chart = new CanvasJS.Chart("wrapper",
+        var chart = new CanvasJS.Chart("oneCanvas",
     	{
     		title:{
     			text: "Real Time Emotions about \'" + data.topic + "\' on Twitter Right Now"
