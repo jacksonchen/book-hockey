@@ -43,6 +43,9 @@ $(document).ready(function(){
         var regex = /(<([^>]+)>)/ig
         if(event.keyCode === 13){
             var hash = $('input#hash').val().replace(regex, "");
+            if (hash[0] === '#') {
+                hash = hash.substring(1, hash.length);
+            }
             console.log(hash);
             socket.emit('hash', hash);
             $('input#hash').val("");
