@@ -1,6 +1,51 @@
+body {
+  font-family: 'Helvetica', 'Arial';
+  margin: 0;
+}
+
+/* HEADER */
+div#header {
+  background-color: #55acee;
+  height: 100px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 5px 5px grey;
+  position: fixed
+}
+
+div#header > div.title {
+  padding-top: 20px;
+  font-size: 36px;
+}
+
+div#header > div.subtitle {
+  font-family: 'Raleway';
+}
+
+/* BODY */
+div#body {
+  padding-top: 100px;
+  min-height: 550px;
+  width: 100%;
+}
+
+div.inputArea {
+  height: 100%;
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+}
+
+/*div#body div div {
+    width: 500px;
+    margin: auto;
+    height: 450px;
+}*/
+
 input {
     text-align: center;
-    width: 800px;
+    width: 600px;
     height: 30px;
-    font-size: 30px;
+    font-size: 15px;
 }
