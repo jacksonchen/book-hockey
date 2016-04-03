@@ -76,24 +76,25 @@ io.on('connection', function(socket) {
     });
     // emit the emotions hash
     eventEmitter.on('send', function(val) {
-        if (val) {
-            console.log(emotions);
-            var sum = emotions.sum();
-            var percents = [];
-            for (var i=0;i<emotions.length;i++) {
-              percents.push(getPercent(emotions[i],sum));
-            }
-            socket.emit('emotions', { "sum": sum, "percents": percents, topic:"Bernie Sanders" });
-            emotions.clear();
-            tweetsProcessed = 0;
-            start();
+        console.log("error: " + val);
+        console.log(emotions);
+        var sum = emotions.sum();
+        console.log("sum: " + sum);
+        var percents = [];
+        for (var i=0;i<emotions.length;i++) {
+          percents.push(getPercent(emotions[i],sum));
         }
+        socket.emit('emotions', { "sum": sum, "percents": percents, topic:"Bernie Sanders" });
+        emotions.clear();
+        tweetsProcessed = 0;
+        start();
     });
 });
 
 function start() {
     getTwitter.tweets(hashtag, function(tweetArr) {
         totalTweets = tweetArr.length;
+        console.log("Total Tweets: " + totalTweets);
         for (var i = 0; i < totalTweets; i++) {
             watsonInit(i, tweetArr);
         }
@@ -105,6 +106,7 @@ function watsonInit(i, tweetArr) {
 };
 
 function watsonCallback(err, tempJSON) {
+    var errNum = 0;
     if (err === null){
         var temp = tempJSON.document_tone.tone_categories[0];
         var sortedObjArray = temp.tones.sort(compare);
@@ -129,10 +131,12 @@ function watsonCallback(err, tempJSON) {
             emotions[0]++;
             break;
         }
+    }else {
+        errNum++;
     }
     tweetsProcessed++;
     if (tweetsProcessed === totalTweets) {
-        eventEmitter.emit('send', true);
+        eventEmitter.emit('send', errNum);
     }
 }
 
