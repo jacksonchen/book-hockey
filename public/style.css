@@ -24,8 +24,8 @@ div#header > div.subtitle {
 
 /* BODY */
 div#body {
-  padding-top: 100px;
-  min-height: 550px;
+  padding-top: 0px;
+  height: 550px;
 }
 
 div#wrapper {
