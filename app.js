@@ -16,15 +16,19 @@ var getTwitter = require('./getTwitter');
 // use watson parser
 var watson = require('./watson');
 // twitter counter to tell us when to start a new thread
-var tweetsProcessed = 0;
+var tweetsProcessedL = 0;
+var tweetsProcessedR = 0;
 // number of tweets
-var totalTweets = 0;
+var totalTweetsL = 0;
+var totalTweetsR = 0;
 // define the search
 var hashtagLeft = "swag";
 // define the search
 var hashtagRight = "swag";
 // past hashtags
-var pastHash = ["swag"];
+var pastHashL = ["swag"];
+var pastHashR = ["swag"];
+//
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
 
@@ -68,9 +72,11 @@ Array.prototype.clear = function() {
 // 2 = fear
 // 3 = joy
 // 4 = sadness
-var emotions = [0,0,0,0,0];
+var emotionsL = [0,0,0,0,0];
+var emotionsR = [0,0,0,0,0];
 
 start(hashtagLeft);
+start(hashtagRight);
 
 io.on('connection', function(socket) {
     console.log("the program connected");
@@ -85,77 +91,123 @@ io.on('connection', function(socket) {
         console.log(hashtagLeft);
     });
     // emit the emotions hash
-    eventEmitter.on('send', function(val) {
+    eventEmitter.on('sendL', function(val) {
         console.log("error: " + val);
-        console.log(emotions);
-        var sum = emotions.sum();
-        console.log("sum: " + sum);
-        var percents = [];
-        for (var i=0;i<emotions.length;i++) {
-          percents.push(getPercent(emotions[i],sum));
+        var sumL = emotionsL.sum();
+        console.log("sum: " + sumL);
+        var percentsL = [];
+        for (var i=0;i<emotionsL.length;i++) {
+          percentsL.push(getPercent(emotionsL[i],sumL));
         }
-        socket.emit('emotions', { "sum": sum, "percents": percents, topic:pastHash[pastHash.length - 1] });
-        emotions.clear();
-        tweetsProcessed = 0;
-        setTimeout(start(), updateInterval);
+        socket.emit('emotionsL', { "sum": sumL, "percents": percentsL, topic:pastHashL[pastHashL.length - 1] });
+        emotionsL.clear();
+        tweetsProcessedL = 0;
+        setTimeout(start(hashtagLeft), updateInterval);
     });
-    eventEmitter.on('nada', function(data) {
+    eventEmitter.on('sendR', function(val) {
+        var sumR = emotionsL.sum();
+        console.log("sum: " + sumR);
+        var percentsR = [];
+        for (var i=0;i<emotionsR.length;i++) {
+          percentsR.push(getPercent(emotionsL[i],sumR));
+        }
+        socket.emit('emotionsR', { "sum": sumR, "percents": percentsR, topic:pastHashR[pastHashR.length - 1] });
+        emotionsR.clear();
+        tweetsProcessedR = 0;
+        setTimeout(start(hashtagRight), updateInterval);
+    });
+    eventEmitter.on('nadaL', function(data) {
         hashtagLeft = "swag";
-        start();
-    })
+        start(hashtagLeft);
+    });
+    eventEmitter.on('nadaR', function(data) {
+        hashtagRight = "swag";
+        start(hashtagRight);
+    });
 });
 
-function start() {
-    getTwitter.tweets(hashtagLeft, function(tweetArr) {
-        totalTweets = tweetArr.length;
-        console.log("Total Tweets: " + totalTweets);
-        if (totalTweets === 0) {
-            eventEmitter.emit("nada", 0);
-        }else{
-            for (var i = 0; i < totalTweets; i++) {
-                watsonInit(i, tweetArr);
+function start(h) {
+    getTwitter.tweets(h, function(tweetArr) {
+        if (h === hashtagLeft) {
+            totalTweetsL = tweetArr.length;
+            if (tweetArr.length === 0) {
+                eventEmitter.emit("nadaL", 0);
             }
+        }else if (h === hashtagRight) {
+            totalTweetsR = tweetArr.length;
+            if (totalTweetsR === 0) {
+                eventEmitter.emit("nadaR", 0);
+            }
+        }
+        for (var i = 0; i < totalTweetsL; i++) {
+            watsonInit(h, i, tweetArr);
         }
     });
 }
 
-function watsonInit(i, tweetArr) {
-  watson.tone(tweetArr[i], watsonCallback);
+function watsonInit(h, i, tweetArr) {
+  watson.tone(h, tweetArr[i], watsonCallback);
 };
 
-function watsonCallback(err, tempJSON) {
+function watsonCallback(h, err, tempJSON) {
     var errNum = 0;
     if (err === null){
         var temp = tempJSON.document_tone.tone_categories[0];
         var sortedObjArray = temp.tones.sort(compare);
         var id = sortedObjArray[0].tone_id;
-        switch(id) {
-          case 'anger':
-            emotions[0]++;
-            break;
-          case 'disgust':
-            emotions[1]++;
-            break;
-          case 'fear':
-            emotions[2]++;
-            break;
-          case 'joy':
-            emotions[3]++;
-            break;
-          case 'sadness':
-            emotions[4]++;
-            break;
-          default:
-            emotions[0]++;
-            break;
+        if (h === hashtagLeft) {
+            switch(id) {
+              case 'anger':
+                emotionsL[0]++;
+                break;
+              case 'disgust':
+                emotionsL[1]++;
+                break;
+              case 'fear':
+                emotionsL[2]++;
+                break;
+              case 'joy':
+                emotionsL[3]++;
+                break;
+              case 'sadness':
+                emotionsL[4]++;
+                break;
+              default:
+                emotionsL[0]++;
+                break;
+            }
+            tweetsProcessedL++;
+        }else{
+            switch(id) {
+              case 'anger':
+                emotionsR[0]++;
+                break;
+              case 'disgust':
+                emotionsR[1]++;
+                break;
+              case 'fear':
+                emotionsR[2]++;
+                break;
+              case 'joy':
+                emotionsR[3]++;
+                break;
+              case 'sadness':
+                emotionsR[4]++;
+                break;
+              default:
+                emotionsR[0]++;
+                break;
+            }
         }
     }else {
         errNum++;
     }
-    tweetsProcessed++;
-    if (tweetsProcessed === totalTweets) {
-        eventEmitter.emit('send', errNum);
-        pastHash.push(hashtagLeft);
+    if (tweetsProcessedL === totalTweetsL) {
+        eventEmitter.emit('sendL', errNum);
+        pastHashL.push(hashtagLeft);
+    }else if (tweetsProcessedR === totalTweetsR) {
+        eventEmitter.emit('sendR', errNum);
+        pastHashR.push(hashtagRight);
     }
 }
 
