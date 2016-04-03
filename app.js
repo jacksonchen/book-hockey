@@ -1,5 +1,5 @@
 // update Interval
-var updateInterval = 5000;
+var updateInterval = 0;
 // import express
 var express = require('express');
 // fs file reader
