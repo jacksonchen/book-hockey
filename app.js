@@ -106,7 +106,7 @@ io.on('connection', function(socket) {
     });
     eventEmitter.on('sendR', function(val) {
         var sumR = emotionsL.sum();
-        console.log("sum: " + sumR);
+        // console.log("sum: " + sumR);
         var percentsR = [];
         for (var i=0;i<emotionsR.length;i++) {
           percentsR.push(getPercent(emotionsL[i],sumR));
@@ -139,7 +139,8 @@ function start(h) {
                 eventEmitter.emit("nadaR", 0);
             }
         }
-        for (var i = 0; i < totalTweetsL; i++) {
+        for (var i = 0; i < tweetArr.length; i++) {
+            // console.log(tweetArr[i]);
             watsonInit(h, i, tweetArr);
         }
     });
