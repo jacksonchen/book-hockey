@@ -44,7 +44,7 @@ function getTweets(apiParams, callback) {
   });
 }
 
-exports.tweets = function compileTweets(topic, apiParams, callback) {
+exports.tweets = function compileTweets(topic, callback) {
   apiParams = {
     oauth_consumer_key : 'UDA0b0ZogUZzk2PAFlBKcaPqB',
     oauth_token : '2922199336-aPKUBmP1kPlIN60WQJkZTh33E9nksBqau19bOVn',
