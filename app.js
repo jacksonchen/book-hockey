@@ -20,7 +20,9 @@ var tweetsProcessed = 0;
 // number of tweets
 var totalTweets = 0;
 // define the search
-var hashtag = "swag";
+var hashtagLeft = "swag";
+// define the search
+var hashtagRight = "swag";
 // past hashtags
 var pastHash = ["swag"];
 var events = require('events');
@@ -68,15 +70,19 @@ Array.prototype.clear = function() {
 // 4 = sadness
 var emotions = [0,0,0,0,0];
 
-start(hashtag);
+start(hashtagLeft);
 
 io.on('connection', function(socket) {
     console.log("the program connected");
-    socket.on('hash', function(hash) {
+    socket.on('hash', function(which, hash) {
         if (hash.length > 0) {
-            hashtag = hash;
+            if (which) {
+                hashtagRight = hash;
+            }else {
+                hashtagLeft = hash;
+            }
         }
-        console.log(hashtag);
+        console.log(hashtagLeft);
     });
     // emit the emotions hash
     eventEmitter.on('send', function(val) {
@@ -94,13 +100,13 @@ io.on('connection', function(socket) {
         setTimeout(start(), updateInterval);
     });
     eventEmitter.on('nada', function(data) {
-        hashtag = "swag";
+        hashtagLeft = "swag";
         start();
     })
 });
 
 function start() {
-    getTwitter.tweets(hashtag, function(tweetArr) {
+    getTwitter.tweets(hashtagLeft, function(tweetArr) {
         totalTweets = tweetArr.length;
         console.log("Total Tweets: " + totalTweets);
         if (totalTweets === 0) {
@@ -149,7 +155,7 @@ function watsonCallback(err, tempJSON) {
     tweetsProcessed++;
     if (tweetsProcessed === totalTweets) {
         eventEmitter.emit('send', errNum);
-        pastHash.push(hashtag);
+        pastHash.push(hashtagLeft);
     }
 }
 
