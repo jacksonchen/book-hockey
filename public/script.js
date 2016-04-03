@@ -17,25 +17,25 @@ $(document).ready(function(){
         			showInLegend: false,
         			dataPoints: [
         				{
-                  y: data.percents[0],
-                  indexLabel: "Anger: " + data.percents[0]
-                },{
-                  y: data.percents[1],
-                  indexLabel: "Disgust: " + data.percents[1]
-                },{
-                  y: data.percents[2],
-                  indexLabel: "Fear: " + data.percents[2]
-                },{
-                  y: data.percents[3],
-                  indexLabel: "Joy: " + data.percents[3]
-                },{
-                  y: data.percents[4],
-                  indexLabel: "Sadness: " + data.percents[4]
-                }
+                        y: data.percents[0],
+                            indexLabel: "Anger: " + data.percents[0]
+                        },{
+                        y: data.percents[1],
+                            indexLabel: "Disgust: " + data.percents[1]
+                        },{
+                        y: data.percents[2],
+                            indexLabel: "Fear: " + data.percents[2]
+                        },{
+                        y: data.percents[3],
+                            indexLabel: "Joy: " + data.percents[3]
+                        },{
+                        y: data.percents[4],
+                            indexLabel: "Sadness: " + data.percents[4]
+                        }
         			]
         		}
     		]
-    	});
+        });
     	chart.render();
     });
 
