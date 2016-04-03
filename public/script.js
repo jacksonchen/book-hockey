@@ -47,7 +47,7 @@ $(document).ready(function(){
                 hash = hash.substring(1, hash.length);
             }
             console.log(hash);
-            socket.emit('hash', hash);
+            socket.emit('hash', 0, hash);
             $('input#hash').val("");
         }
     });
