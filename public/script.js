@@ -39,14 +39,13 @@ $(document).ready(function(){
     	chart.render();
     });
 
-    $('input').keyup(function(event) {
-        if(event.keycode === 13){
-            var hash = $('input').val();
-            if (hash.charAt(0) === '#'){
-                hash.charAt(0) = "";
-            }
+    $('input#hash').keyup(function(event) {
+        var regex = /(<([^>]+)>)/ig
+        if(event.keyCode === 13){
+            var hash = $('input#hash').val().replace(regex, "");
+            console.log(hash);
             socket.emit('hash', hash);
-            $('input').val("");
+            $('input#hash').val("");
         }
     });
 });

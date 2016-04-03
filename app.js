@@ -20,8 +20,9 @@ var tweetsProcessed = 0;
 // number of tweets
 var totalTweets = 0;
 // define the search
-var hashtag = "";
-
+var hashtag = "swag";
+// past hashtags
+var pastHash = ["swag"];
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
 
@@ -67,12 +68,13 @@ Array.prototype.clear = function() {
 // 4 = sadness
 var emotions = [0,0,0,0,0];
 
-start();
+start(hashtag);
 
 io.on('connection', function(socket) {
     console.log("the program connected");
     socket.on('hash', function(hash) {
         hashtag = hash;
+        console.log(hashtag);
     });
     // emit the emotions hash
     eventEmitter.on('send', function(val) {
@@ -84,10 +86,10 @@ io.on('connection', function(socket) {
         for (var i=0;i<emotions.length;i++) {
           percents.push(getPercent(emotions[i],sum));
         }
-        socket.emit('emotions', { "sum": sum, "percents": percents, topic:"Bernie Sanders" });
+        socket.emit('emotions', { "sum": sum, "percents": percents, topic:pastHash[pastHash.length - 1] });
         emotions.clear();
         tweetsProcessed = 0;
-        start();
+        setTimeout(start(), updateInterval);
     });
 });
 
@@ -137,6 +139,7 @@ function watsonCallback(err, tempJSON) {
     tweetsProcessed++;
     if (tweetsProcessed === totalTweets) {
         eventEmitter.emit('send', errNum);
+        pastHash.push(hashtag);
     }
 }
 
