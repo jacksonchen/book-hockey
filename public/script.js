@@ -46,7 +46,7 @@ $(document).ready(function(){
                 hash.charAt(0) = "";
             }
             socket.emit('hash', hash);
-            #('input').val("");
+            $('input').val("");
         }
     });
 });
