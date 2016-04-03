@@ -1,26 +1,62 @@
-var spawn = require('child_process').spawn;
+var spawn = require('child_process').spawn,
+    OAuth = require('oauth');
 
-function getTweets(callback) {
-  var child = spawn('curl', [
-    '--get', 'https://api.twitter.com/1.1/search/tweets.json',
-    '--data', 'count=100&q=%23berniesanders&src=typd',
-    '--header', 'Authorization: OAuth oauth_consumer_key=\"UDA0b0ZogUZzk2PAFlBKcaPqB\", oauth_nonce=\"80fed41a8537395e237d9f0a0ec8fddb\", oauth_signature=\"Eor3wUueJBSeB4LZaksaKXaVeBI%3D\", oauth_signature_method=\"HMAC-SHA1\", oauth_timestamp=\"1459647859\", oauth_token=\"2922199336-aPKUBmP1kPlIN60WQJkZTh33E9nksBqau19bOVn\", oauth_version=\"1.0\"'
-  ]);
+function genNonce(callback) {
+  var nonceChars = []
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for (var i=0; i < 32; i++) {
+    nonceChars.push(possible.charAt(Math.floor(Math.random() * possible.length)));
+  }
+  callback(nonceChars.join(''));
+}
 
-  var tweetsHash = '';
+// TODO: REMEMBER TO REMOVE SECRETS
+function buildSignature(dataQuery, apiParams, callback) {
+  var httpMethod = 'GET',
+    	url = 'https://api.twitter.com/1.1/search/tweets.json';
 
-  child.stdout.on('data', function(chunk) {
-    tweetsHash += chunk;
-  });
+  var oauth = new OAuth.OAuth(
+      'https://api.twitter.com/oauth/request_token',
+      'https://api.twitter.com/oauth/access_token',
+      apiParams.oauth_consumer_key,
+      apiParams.consumerSecret,
+      '1.0',
+      null,
+      'HMAC-SHA1'
+    );
+  oauth.get(
+    url + '?' + dataQuery,
+    apiParams.oauth_token,
+    apiParams.tokenSecret,
+    function (e, data, res){
+      if (e) console.error(e);
+      callback(data);
+   });
+}
 
-  child.stdout.on('end', function() {
-    callback(JSON.parse(tweetsHash.toString()).statuses);
+function getTweets(apiParams, callback) {
+  genNonce(function(nonce) {
+    apiParams.oauth_nonce = nonce;
+    var dataQuery = 'count=100&q=' + encodeURI(apiParams.status) + '&src=typd';
+    buildSignature(dataQuery, apiParams, function(tweetHash) {
+      callback(JSON.parse(tweetHash.toString()).statuses);
+    });
   });
 }
 
-exports.tweets = function compileTweets(hash, callback) {
+exports.tweets = function compileTweets(topic, callback) {
+  apiParams = {
+    oauth_consumer_key : 'UDA0b0ZogUZzk2PAFlBKcaPqB',
+    oauth_token : '2922199336-aPKUBmP1kPlIN60WQJkZTh33E9nksBqau19bOVn',
+    consumerSecret : '6KUdtbCjjhd1tTzo97dZhxTYmsUPloYbbkLInE2B0Xxnaiys0b',
+    tokenSecret : '3tB5YMTbi6glEzpLYuJBjd796kiDYpJuhsOPRF7b3e6ys',
+    oauth_timestamp : Date.now(),
+    oauth_signature_method : 'HMAC-SHA1',
+    oauth_version : '1.0',
+    status: topic
+  };
   var tweetArr = []
-  getTweets(function(tweetsHash) {
+  getTweets(apiParams, function(tweetsHash) {
     tweetsHash.forEach(function(tweet) {
       tweetArr.push(tweet.text);
     });
@@ -30,6 +66,6 @@ exports.tweets = function compileTweets(hash, callback) {
 
 // MAIN
 
-// compileTweets("hi", function(tweetArr) {
+// compileTweets(process.argv[2], function(tweetArr) {
 //   console.log(tweetArr);
 // })
