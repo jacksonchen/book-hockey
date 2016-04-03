@@ -73,7 +73,9 @@ start(hashtag);
 io.on('connection', function(socket) {
     console.log("the program connected");
     socket.on('hash', function(hash) {
-        hashtag = hash;
+        if (hash.length > 0) {
+            hashtag = hash;
+        }
         console.log(hashtag);
     });
     // emit the emotions hash
